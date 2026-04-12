@@ -6,13 +6,12 @@ import {
   ThemeProvider,
 } from '@react-navigation/native'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { Stack } from 'expo-router'
+import { SplashScreen, Stack, useRouter, useSegments } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
-import { useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import type { MD3Theme } from 'react-native-paper'
 import {
   adaptNavigationTheme,
-  Button,
   MD3DarkTheme,
   MD3LightTheme,
   PaperProvider,
@@ -21,6 +20,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { ThemeProvider as StyledThemeProvider } from 'styled-components/native'
 
 import { useAuthStore } from '@/features/auth/store/useAuthStore'
+import { GlobalToast } from '@/shared/components/GlobalToast'
 import { theme as projectTheme } from '@/shared/constants/theme'
 import { useTheme } from '@/shared/hooks/useTheme'
 
@@ -31,11 +31,14 @@ const { LightTheme, DarkTheme } = adaptNavigationTheme({
 
 const queryClient = new QueryClient()
 
-// SplashScreen.preventAutoHideAsync()
+SplashScreen.preventAutoHideAsync()
 
 export default function RootLayout() {
-  const { initialize } = useAuthStore()
-  const { isDark, colors, toggleTheme } = useTheme()
+  const { initialize, isAuthenticated } = useAuthStore()
+  const { isDark } = useTheme()
+  const segments = useSegments()
+  const router = useRouter()
+  const [isReady, setIsReady] = useState(false)
 
   const [loaded, error] = useFonts({
     'Manrope-Regular': Manrope_400Regular,
@@ -45,14 +48,26 @@ export default function RootLayout() {
   })
 
   useEffect(() => {
-    initialize()
+    initialize().finally(() => setIsReady(true))
   }, [initialize])
 
-  // useEffect(() => {
-  //   if (loaded || error) {
-  //     SplashScreen.hideAsync()
-  //   }
-  // }, [loaded, error])
+  useEffect(() => {
+    if (!isReady || (!loaded && !error)) return
+
+    const inAuthGroup = segments[0] === '(auth)'
+
+    if (isAuthenticated && inAuthGroup) {
+      router.replace('/(main)/farms')
+    } else if (!isAuthenticated && !inAuthGroup) {
+      router.replace('/(auth)/login')
+    }
+  }, [isAuthenticated, segments, isReady, loaded, error])
+
+  useEffect(() => {
+    if ((loaded || error) && isReady) {
+      SplashScreen.hideAsync()
+    }
+  }, [loaded, error, isReady])
 
   const paperTheme: MD3Theme = useMemo(
     () => ({
@@ -90,30 +105,13 @@ export default function RootLayout() {
         <ThemeProvider value={navigationTheme as any}>
           <SafeAreaProvider>
             <QueryClientProvider client={queryClient}>
-              <Stack
-                screenOptions={{
-                  headerShown: true,
-                  headerStyle: {
-                    backgroundColor: colors.background,
-                  },
-                  headerTintColor: colors.text,
-                  headerRight: () => (
-                    <Button
-                      icon={isDark ? 'weather-sunny' : 'weather-night'}
-                      onPress={toggleTheme}
-                    >
-                      {isDark ? 'Light' : 'Dark'}
-                    </Button>
-                  ),
-                  contentStyle: {
-                    backgroundColor: colors.background,
-                  },
-                }}
-              >
+              <Stack>
                 <Stack.Screen name="index" options={{ headerShown: false }} />
-                <Stack.Screen name="(auth)/login" options={{ headerShown: true }} />
+                <Stack.Screen name="(auth)/login" options={{ headerShown: false }} />
+                <Stack.Screen name="(main)" options={{ headerShown: false }} />
               </Stack>
               <StatusBar style={isDark ? 'light' : 'dark'} />
+              <GlobalToast />
             </QueryClientProvider>
           </SafeAreaProvider>
         </ThemeProvider>
