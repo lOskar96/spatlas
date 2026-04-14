@@ -8,8 +8,10 @@ import { FarmCard } from '@/features/fincas/components/FarmCard'
 import { FarmCardSkeleton } from '@/features/fincas/components/FarmCardSkeleton'
 import { FarmHeader } from '@/features/fincas/components/FarmHeader'
 import type { Farm } from '@/features/fincas/types/farm'
+import { useHeaderTitle } from '@/shared/hooks/useHeaderTitle'
 
-export default function FincasScreen() {
+export default function FarmsScreen() {
+  useHeaderTitle('Fincas')
   const { data, refetch, isLoading, error } = useFarms()
   const router = useRouter()
 
@@ -41,12 +43,12 @@ export default function FincasScreen() {
         showFavoritesOnly={showFavoritesOnly}
         setShowFavoritesOnly={setShowFavoritesOnly}
       />
-      <FarmList
+      <FlatList<Farm>
         data={isLoading ? [] : filteredData}
         keyExtractor={(item) => item.id.toString()}
         refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} />}
         renderItem={({ item }) => (
-          <FarmCard farm={item} onPress={() => router.push(`/farms/${item.id}`)} />
+          <FarmCard farm={item} onPress={() => router.push(`/farms/${item.id}` as any)} />
         )}
         ListHeaderComponent={
           <>
@@ -67,6 +69,7 @@ export default function FincasScreen() {
           ) : null
         }
         contentContainerStyle={{ paddingBottom: 24 }}
+        style={{ paddingTop: 12 }}
       />
     </MainContainer>
   )
@@ -96,8 +99,4 @@ const EmptyText = styled.Text`
   opacity: 0.6;
   margin-top: 32px;
   font-family: 'Manrope-Regular';
-`
-
-const FarmList = styled(FlatList)`
-  padding-top: 12px;
 `
