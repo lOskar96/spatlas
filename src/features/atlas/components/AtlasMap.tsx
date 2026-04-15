@@ -1,8 +1,8 @@
 import { useFocusEffect, useIsFocused } from '@react-navigation/native'
+import Constants from 'expo-constants'
 import { MapPin, Minus, Plus } from 'lucide-react-native'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Platform, Pressable } from 'react-native'
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import styled from 'styled-components/native'
 
 interface AtlasMapProps {
@@ -25,7 +25,7 @@ export function AtlasMap({ initialRegion, coordinate, title }: AtlasMapProps) {
   const isFocused = useIsFocused()
   const [showMap, setShowMap] = useState(false)
   const [mapType, setMapType] = useState<MapType>('standard')
-  const mapRef = useRef<MapView>(null)
+  const mapRef = useRef<any>(null)
   const [region, setRegion] = useState(initialRegion)
 
   useEffect(() => {
@@ -86,9 +86,31 @@ export function AtlasMap({ initialRegion, coordinate, title }: AtlasMapProps) {
     setMapType(types[nextIndex])
   }
 
+  const appOwnership = (Constants as any).appOwnership
+  const executionEnvironment = (Constants as any).executionEnvironment
+  const isExpoGo =
+    appOwnership === 'expo' ||
+    executionEnvironment === 'storeClient' ||
+    executionEnvironment === 'expoGo'
+
   if (!isFocused || !showMap) {
     return null
   }
+
+  if (isExpoGo) {
+    return (
+      <PlaceholderContainer>
+        <PlaceholderText>Mapas no disponibles en Expo Go.</PlaceholderText>
+        <PlaceholderSubText>
+          Usa un build nativo o Expo dev client para ver el mapa.
+        </PlaceholderSubText>
+      </PlaceholderContainer>
+    )
+  }
+
+  const MapLib: any = require('react-native-maps')
+  const MapView = MapLib.default
+  const Marker = MapLib.Marker
 
   return (
     <Container>
@@ -97,7 +119,6 @@ export function AtlasMap({ initialRegion, coordinate, title }: AtlasMapProps) {
         ref={mapRef}
         region={region}
         onRegionChangeComplete={setRegion}
-        provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
         liteMode={Platform.OS === 'android'}
         style={{ flex: 1 }}
         mapType={mapType}
@@ -202,4 +223,29 @@ const MapTypeButton = styled(Pressable)`
 
 const MapTypeText = styled.Text`
   font-size: 20px;
+`
+
+const PlaceholderContainer = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  background-color: ${({ theme }) => theme.surface};
+  border-radius: 16px;
+`
+
+const PlaceholderText = styled.Text`
+  font-family: 'Manrope-Bold';
+  font-size: 18px;
+  color: ${({ theme }) => theme.text};
+  text-align: center;
+  margin-bottom: 8px;
+`
+
+const PlaceholderSubText = styled.Text`
+  font-family: 'Manrope-Regular';
+  font-size: 14px;
+  color: ${({ theme }) => theme.text};
+  opacity: 0.7;
+  text-align: center;
 `

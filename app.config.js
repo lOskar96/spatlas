@@ -26,7 +26,7 @@ export default ({ config }) => ({
       package: 'com.oscarm.spatlas',
       adaptiveIcon: {
         backgroundColor: '#E6F4FE',
-        foregroundImage: './assets/images/spatlas-icon.png.png',
+        foregroundImage: './assets/images/spatlas-icon.png',
         backgroundImage: './assets/images/android-icon-background.png',
         monochromeImage: './assets/images/android-icon-monochrome.png',
       },
