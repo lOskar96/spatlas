@@ -24,7 +24,17 @@ interface AtlasCardProps {
 export function AtlasCard({ atlas, index, onPress }: AtlasCardProps) {
   const theme = useTheme()
   const scale = useSharedValue(1)
-  console.log(atlas)
+
+  const handlePressIn = () => {
+    'worklet'
+    scale.value = withSpring(0.97)
+  }
+
+  const handlePressOut = () => {
+    'worklet'
+    scale.value = withSpring(1)
+  }
+
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
   }))
@@ -51,11 +61,7 @@ export function AtlasCard({ atlas, index, onPress }: AtlasCardProps) {
       entering={FadeInDown.delay(index * 60).duration(350)}
       style={animatedStyle}
     >
-      <Pressable
-        onPressIn={() => (scale.value = withSpring(0.97))}
-        onPressOut={() => (scale.value = withSpring(1))}
-        onPress={onPress}
-      >
+      <Pressable onPressIn={handlePressIn} onPressOut={handlePressOut} onPress={onPress}>
         <CardHeader>
           <NameContainer>
             <DeviceName numberOfLines={1}>{atlas.name}</DeviceName>

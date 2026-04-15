@@ -1,10 +1,11 @@
 import { useLocalSearchParams, useRouter } from 'expo-router'
-import { ActivityIndicator, FlatList, RefreshControl } from 'react-native'
+import { ActivityIndicator, FlatList, RefreshControl, View } from 'react-native'
 import { Text } from 'react-native-paper'
 import styled from 'styled-components/native'
 
 import { useAtlas } from '@/features/atlas/api/atlasService'
 import { AtlasCard } from '@/features/atlas/components/AtlasCard'
+import { AtlasCardSkeleton } from '@/features/atlas/components/AtlasCardSkeleton'
 import type { Atlas } from '@/features/atlas/types/atlas'
 import { useHeaderTitle } from '@/shared/hooks/useHeaderTitle'
 
@@ -51,6 +52,15 @@ export default function AtlasScreen() {
           }
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.5}
+          ListHeaderComponent={
+            isLoading && atlasItems.length === 0 ? (
+              <View>
+                {[1, 2, 3].map((key) => (
+                  <AtlasCardSkeleton key={key} />
+                ))}
+              </View>
+            ) : null
+          }
           ListEmptyComponent={
             !isLoading ? (
               <EmptyText>No hay atlas disponibles para esta finca.</EmptyText>

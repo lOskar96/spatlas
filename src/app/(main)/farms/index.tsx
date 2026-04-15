@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router'
-import React, { useMemo, useState } from 'react'
+import React from 'react'
 import { FlatList, RefreshControl, View } from 'react-native'
 import styled from 'styled-components/native'
 
@@ -9,23 +9,26 @@ import { FarmCardSkeleton } from '@/features/fincas/components/FarmCardSkeleton'
 import { FarmHeader } from '@/features/fincas/components/FarmHeader'
 import type { Farm } from '@/features/fincas/types/farm'
 import { useHeaderTitle } from '@/shared/hooks/useHeaderTitle'
+import { useSearch } from '@/shared/hooks/useSearch'
 
 export default function FarmsScreen() {
   useHeaderTitle('Fincas')
-  const { data, refetch, isLoading, error } = useFarms()
+  const { data, refetch, isLoading, isRefetching, error } = useFarms()
   const router = useRouter()
 
-  const [searchQuery, setSearchQuery] = useState('')
-  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false)
-
-  const filteredData = useMemo(() => {
-    if (!data) return []
-    return (data as Farm[]).filter((farm) => {
-      const matchesSearch = farm.name.toLowerCase().includes(searchQuery.toLowerCase())
-      const matchesFavorite = showFavoritesOnly ? farm.favourite : true
-      return matchesSearch && matchesFavorite
-    })
-  }, [data, searchQuery, showFavoritesOnly])
+  const {
+    searchQuery,
+    setSearchQuery,
+    filtered: filteredData,
+    activeFilters,
+    toggleFilter,
+  } = useSearch({
+    items: (data as Farm[]) || [],
+    searchFields: ['name'],
+    filters: {
+      favorites: (farm) => farm.favourite,
+    },
+  })
 
   if (error) {
     return (
@@ -40,13 +43,13 @@ export default function FarmsScreen() {
       <FarmHeader
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
-        showFavoritesOnly={showFavoritesOnly}
-        setShowFavoritesOnly={setShowFavoritesOnly}
+        showFavoritesOnly={activeFilters.includes('favorites')}
+        setShowFavoritesOnly={() => toggleFilter('favorites')}
       />
       <FlatList<Farm>
         data={isLoading ? [] : filteredData}
         keyExtractor={(item) => item.id.toString()}
-        refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} />}
+        refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={refetch} />}
         renderItem={({ item }) => (
           <FarmCard farm={item} onPress={() => router.push(`/farms/${item.id}` as any)} />
         )}
@@ -70,6 +73,7 @@ export default function FarmsScreen() {
         }
         contentContainerStyle={{ paddingBottom: 24 }}
         style={{ paddingTop: 12 }}
+        showsVerticalScrollIndicator={false}
       />
     </MainContainer>
   )

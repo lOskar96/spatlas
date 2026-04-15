@@ -5,15 +5,18 @@ import styled from 'styled-components/native'
 import { useAuthStore } from '@/features/auth/store/useAuthStore'
 import { theme } from '@/shared/constants/theme'
 
+import { useTheme } from '../hooks/useTheme'
+
 type LogoutModalProps = {
   visible: boolean
   onDismiss: () => void
 }
 
 export function LogoutModal({ visible, onDismiss }: LogoutModalProps) {
+  const { isDark } = useTheme()
   const logout = useAuthStore((state) => state.logout)
   const containerStyle = {
-    backgroundColor: theme.surface,
+    backgroundColor: isDark ? theme.dark.surface : theme.light.surface,
     padding: 20,
     margin: 20,
     borderRadius: 8,

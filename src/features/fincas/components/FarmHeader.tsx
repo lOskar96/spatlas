@@ -47,14 +47,6 @@ const HeaderContainer = styled.View`
     theme.isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)'};
 `
 
-const ListHeaderText = styled.Text`
-  font-size: 28px;
-  font-family: 'Manrope-Bold';
-  color: ${({ theme }) => theme.text};
-`
-
-const FilterRow = styled.View``
-
 const StyledSearchbar = styled(Searchbar).attrs(({ theme }) => ({
   inputStyle: {
     fontSize: 14,

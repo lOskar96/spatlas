@@ -1,9 +1,10 @@
 import { useSegments } from 'expo-router'
-import { useState } from 'react'
 import { TouchableOpacity } from 'react-native'
 import { Avatar, IconButton } from 'react-native-paper'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
+import { useModal } from '@/shared/hooks/useModal'
 import { useTheme } from '@/shared/hooks/useTheme'
 
 import { LogoutModal } from './LogoutModal'
@@ -19,7 +20,8 @@ type MainHeaderProps = {
 export function MainHeader({ navigation, title }: MainHeaderProps) {
   const { toggleTheme, isDark } = useTheme()
   const segments = useSegments()
-  const [modalVisible, setModalVisible] = useState(false)
+  const { visible: modalVisible, open: openModal, close: closeModal } = useModal()
+  const insets = useSafeAreaInsets()
 
   const mainSegments = segments.filter(
     (segment) => segment !== '(main)' && segment !== '(auth)',
@@ -28,7 +30,7 @@ export function MainHeader({ navigation, title }: MainHeaderProps) {
   const showBack = navigation.canGoBack() && isNestedRoute
 
   return (
-    <HeaderContainer>
+    <HeaderContainer style={{ paddingTop: insets.top }}>
       <LeftContent>
         {showBack ? (
           <IconButton icon="arrow-left" size={24} onPress={navigation.goBack} />
@@ -46,17 +48,17 @@ export function MainHeader({ navigation, title }: MainHeaderProps) {
           accessibilityLabel="Cambiar tema"
         />
 
-        <ProfileButton onPress={() => setModalVisible(true)}>
+        <ProfileButton onPress={openModal}>
           <AvatarIcon size={40} icon="power" color="#fff" />
         </ProfileButton>
       </RightContent>
 
-      <LogoutModal visible={modalVisible} onDismiss={() => setModalVisible(false)} />
+      <LogoutModal visible={modalVisible} onDismiss={closeModal} />
     </HeaderContainer>
   )
 }
 
-const HeaderContainer = styled.SafeAreaView`
+const HeaderContainer = styled.View`
   width: 100%;
   flex-direction: row;
   justify-content: space-between;

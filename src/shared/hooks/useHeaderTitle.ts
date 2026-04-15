@@ -1,4 +1,3 @@
-// shared/hooks/useHeaderTitle.ts
 import { useNavigation } from 'expo-router'
 import { useEffect } from 'react'
 
