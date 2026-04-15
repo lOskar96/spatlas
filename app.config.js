@@ -1,3 +1,5 @@
+import 'dotenv/config'
+
 export default ({ config }) => ({
   ...config,
   expo: {
@@ -5,7 +7,7 @@ export default ({ config }) => ({
     slug: 'spatlas',
     version: '1.0.0',
     orientation: 'portrait',
-    icon: './assets/images/icon.png',
+    icon: './assets/images/spatlas-icon.png',
     scheme: 'spatlas',
     userInterfaceStyle: 'automatic',
     newArchEnabled: true,
@@ -24,7 +26,7 @@ export default ({ config }) => ({
       package: 'com.oscarm.spatlas',
       adaptiveIcon: {
         backgroundColor: '#E6F4FE',
-        foregroundImage: './assets/images/android-icon-foreground.png',
+        foregroundImage: './assets/images/spatlas-icon.png.png',
         backgroundImage: './assets/images/android-icon-background.png',
         monochromeImage: './assets/images/android-icon-monochrome.png',
       },
@@ -48,8 +50,8 @@ export default ({ config }) => ({
       [
         'expo-splash-screen',
         {
-          image: './assets/images/splash-icon.png',
-          imageWidth: 200,
+          image: './assets/images/splash-logo.png',
+          imageWidth: 260,
           resizeMode: 'contain',
           backgroundColor: '#ffffff',
           dark: {
@@ -57,7 +59,13 @@ export default ({ config }) => ({
           },
         },
       ],
-      'react-native-maps',
+      [
+        'react-native-maps',
+        {
+          iosGoogleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
+          androidGoogleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
+        },
+      ],
     ],
 
     experiments: {
@@ -66,6 +74,8 @@ export default ({ config }) => ({
     },
 
     extra: {
+      authBaseUrl: process.env.AUTH_BASE_URL,
+      coreBaseUrl: process.env.CORE_BASE_URL,
       router: {},
       eas: {
         projectId: 'd18dc9c4-b417-4346-b1d1-7ba4d587273e',

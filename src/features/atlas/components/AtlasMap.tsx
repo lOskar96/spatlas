@@ -98,6 +98,7 @@ export function AtlasMap({ initialRegion, coordinate, title }: AtlasMapProps) {
         region={region}
         onRegionChangeComplete={setRegion}
         provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
+        liteMode={Platform.OS === 'android'}
         style={{ flex: 1 }}
         mapType={mapType}
         showsCompass={true}

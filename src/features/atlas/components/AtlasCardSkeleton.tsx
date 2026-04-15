@@ -51,11 +51,6 @@ const SkeletonCard = styled(Animated.View)`
   background-color: ${({ theme }) => theme.surface || '#FFFFFF'};
   border-radius: 16px;
   margin: 0 16px 12px;
-  shadow-color: #000;
-  shadow-offset: 0px 2px;
-  shadow-opacity: 0.08;
-  shadow-radius: 4px;
-  elevation: 2;
   overflow: hidden;
 `
 

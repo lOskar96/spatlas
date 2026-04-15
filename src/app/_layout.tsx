@@ -6,7 +6,7 @@ import {
   ThemeProvider,
 } from '@react-navigation/native'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { SplashScreen, Stack, useRouter, useSegments } from 'expo-router'
+import { Stack, useRouter, useSegments } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import React, { useEffect, useMemo, useState } from 'react'
 import type { MD3Theme } from 'react-native-paper'
@@ -31,7 +31,7 @@ const { LightTheme, DarkTheme } = adaptNavigationTheme({
 
 const queryClient = new QueryClient()
 
-SplashScreen.preventAutoHideAsync()
+// SplashScreen.preventAutoHideAsync()
 
 export default function RootLayout() {
   const { initialize, isAuthenticated } = useAuthStore()
@@ -63,11 +63,11 @@ export default function RootLayout() {
     }
   }, [isAuthenticated, segments, isReady, loaded, error, router])
 
-  useEffect(() => {
-    if ((loaded || error) && isReady) {
-      SplashScreen.hideAsync()
-    }
-  }, [loaded, error, isReady])
+  // useEffect(() => {
+  //   if ((loaded || error) && isReady) {
+  //     SplashScreen.hideAsync()
+  //   }
+  // }, [loaded, error, isReady])
 
   const paperTheme: MD3Theme = useMemo(
     () => ({

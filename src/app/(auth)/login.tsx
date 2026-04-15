@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Tractor } from 'lucide-react-native'
 import React from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import { Image } from 'react-native'
 import { Button, Text, TextInput } from 'react-native-paper'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
@@ -32,7 +32,7 @@ export default function Login() {
       <Content>
         <HeaderContainer>
           <IconBackground>
-            <Tractor size={32} color="white" />
+            <Logo source={require('../../../assets/images/spatlas-icon.webp')} />
           </IconBackground>
           <TitleContainer>
             <BrandText>Spatlas</BrandText>
@@ -119,10 +119,20 @@ const HeaderContainer = styled.View`
   gap: 16px;
 `
 
+const Logo = styled(Image).attrs({
+  resizeMode: 'contain',
+})`
+  width: 80px;
+  height: 80px;
+`
+
 const IconBackground = styled.View`
-  padding: 16px;
+  width: 80px;
+  height: 80px;
   background-color: ${(props) => props.theme.primary};
   border-radius: 999px;
+  justify-content: center;
+  align-items: center;
 `
 
 const TitleContainer = styled.View`

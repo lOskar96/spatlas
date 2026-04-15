@@ -1,11 +1,15 @@
 import type { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import axios from 'axios'
+import Constants from 'expo-constants'
 
 import { useAuthStore } from '@/features/auth/store/useAuthStore'
 import { useToastStore } from '@/shared/store/useToastStore'
 
-const AUTH_BASE_URL = 'https://api.spherag.com'
-const CORE_BASE_URL = 'https://apicore.spherag.com'
+const config = (Constants.expoConfig?.extra ?? Constants.manifest?.extra) as
+  | Record<string, string | undefined>
+  | undefined
+const AUTH_BASE_URL = config?.authBaseUrl
+const CORE_BASE_URL = config?.coreBaseUrl
 
 export const authApi = axios.create({
   baseURL: AUTH_BASE_URL,
