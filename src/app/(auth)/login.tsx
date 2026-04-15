@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter } from 'expo-router'
 import { Tractor } from 'lucide-react-native'
 import React from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -13,8 +12,6 @@ import { loginSchema } from '@/features/auth/types/auth'
 
 export default function Login() {
   const { mutate: login, isPending } = useLogin()
-
-  const router = useRouter()
 
   const {
     control,
@@ -61,11 +58,11 @@ export default function Login() {
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
-                error={!!errors.email}
+                error={!!errors.username}
               />
             )}
           />
-          {errors.email && <Error>{errors.email.message}</Error>}
+          {errors.username && <Error>{errors.username.message}</Error>}
           <Controller
             control={control}
             name="password"

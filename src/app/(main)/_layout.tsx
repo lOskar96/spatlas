@@ -12,8 +12,6 @@ export default function FincasLayout() {
         headerShown: true,
       }}
     >
-      <Stack.Screen name="farms" />
-      <Stack.Screen name="farms/[farmId]" />
       <Stack.Screen name="farms/[farmId]/[imei]" />
     </Stack>
   )

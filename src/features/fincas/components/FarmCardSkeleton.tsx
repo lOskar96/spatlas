@@ -12,7 +12,7 @@ export const FarmCardSkeleton = () => {
 
   useEffect(() => {
     opacity.value = withRepeat(withTiming(0.8, { duration: 1000 }), -1, true)
-  }, [])
+  }, [opacity])
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
@@ -48,7 +48,7 @@ const SkeletonCard = styled(Animated.View)`
 const SkeletonImage = styled.View`
   width: 100%;
   height: 140px;
-  background-color: ${({ theme }) => theme.colors?.elevation?.level2 || '#E0E0E0'};
+  background-color: ${({ theme }) => theme.textMuted || '#E0E0E0'};
 `
 
 const SkeletonContent = styled.View`
@@ -65,7 +65,7 @@ const SkeletonHeader = styled.View`
 const SkeletonTitle = styled.View`
   height: 24px;
   width: 60%;
-  background-color: ${({ theme }) => theme.colors?.elevation?.level2 || '#E0E0E0'};
+  background-color: ${({ theme }) => theme.textMuted || '#E0E0E0'};
   border-radius: 4px;
 `
 
@@ -73,13 +73,13 @@ const SkeletonIcon = styled.View`
   height: 24px;
   width: 24px;
   border-radius: 12px;
-  background-color: ${({ theme }) => theme.colors?.elevation?.level2 || '#E0E0E0'};
+  background-color: ${({ theme }) => theme.textMuted || '#E0E0E0'};
 `
 
 const SkeletonRow = styled.View`
   height: 16px;
   width: 40%;
-  background-color: ${({ theme }) => theme.colors?.elevation?.level2 || '#E0E0E0'};
+  background-color: ${({ theme }) => theme.textMuted || '#E0E0E0'};
   border-radius: 4px;
   margin-bottom: 12px;
 `

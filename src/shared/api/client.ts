@@ -30,7 +30,6 @@ coreApi.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
 })
 
 const getErrorMessage = (error: AxiosError) => {
-  console.log(error.response?.data)
   const data = error.response?.data as any
   return (
     data?.Message ||

@@ -25,6 +25,16 @@ export const FarmCard = ({ farm, onPress }: FarmCardProps) => {
 
   const scale = useSharedValue(1)
 
+  const handlePressIn = () => {
+    'worklet'
+    scale.value = withSpring(0.97)
+  }
+
+  const handlePressOut = () => {
+    'worklet'
+    scale.value = withSpring(1)
+  }
+
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
   }))
@@ -40,54 +50,57 @@ export const FarmCard = ({ farm, onPress }: FarmCardProps) => {
   }, [farm.createdDate])
 
   return (
-    <AnimatedCard
+    <AnimatedWrapper
       layout={LinearTransition.duration(200)}
       entering={FadeInDown.duration(300)}
-      style={animatedStyle}
     >
-      <Pressable
-        onPressIn={() => (scale.value = withSpring(0.96))}
-        onPressOut={() => (scale.value = withSpring(1))}
-        onPress={onPress}
-      >
-        <FarmImage
-          source={
-            farm?.image
-              ? { uri: farm.image }
-              : require('../../../../assets/images/farm.webp')
-          }
-          contentFit="cover"
-        />
-        <CardContent>
-          <CardHeader>
-            <FarmName numberOfLines={1}>{farm.name}</FarmName>
-            <StarButton disabled>
-              <Star
-                size={24}
-                color={isFavorite ? '#FFD700' : '#E0E0E0'}
-                fill={isFavorite ? '#FFD700' : 'transparent'}
-              />
-            </StarButton>
-          </CardHeader>
+      <AnimatedCard style={animatedStyle}>
+        <Pressable
+          onPressIn={handlePressIn}
+          onPressOut={handlePressOut}
+          onPress={onPress}
+        >
+          <FarmImage
+            source={
+              farm?.image
+                ? { uri: farm.image }
+                : require('../../../../assets/images/farm.webp')
+            }
+            contentFit="cover"
+          />
+          <CardContent>
+            <CardHeader>
+              <FarmName numberOfLines={1}>{farm.name}</FarmName>
+              <StarButton disabled>
+                <Star
+                  size={24}
+                  color={isFavorite ? '#FFD700' : '#E0E0E0'}
+                  fill={isFavorite ? '#FFD700' : 'transparent'}
+                />
+              </StarButton>
+            </CardHeader>
 
-          <InfoRow>
-            <CalendarDays size={16} color={theme.colors?.primary || '#666'} />
-            <InfoText>Creada el {formattedDate}</InfoText>
-          </InfoRow>
+            <InfoRow>
+              <CalendarDays size={16} color={theme.colors?.primary || '#666'} />
+              <InfoText>Creada el {formattedDate}</InfoText>
+            </InfoRow>
 
-          <InfoRow>
-            <MapPin size={16} color={theme.colors?.primary || '#666'} />
-            <InfoText>
-              {farm.latitude && farm.longitude
-                ? `${parseFloat(farm.latitude)}, ${parseFloat(farm.longitude)}`
-                : 'Sin coordenadas'}
-            </InfoText>
-          </InfoRow>
-        </CardContent>
-      </Pressable>
-    </AnimatedCard>
+            <InfoRow>
+              <MapPin size={16} color={theme.colors?.primary || '#666'} />
+              <InfoText>
+                {farm.latitude && farm.longitude
+                  ? `${parseFloat(farm.latitude)}, ${parseFloat(farm.longitude)}`
+                  : 'Sin coordenadas'}
+              </InfoText>
+            </InfoRow>
+          </CardContent>
+        </Pressable>
+      </AnimatedCard>
+    </AnimatedWrapper>
   )
 }
+
+const AnimatedWrapper = Animated.View
 
 const AnimatedCard = styled(Animated.View)`
   background-color: ${({ theme }) => theme.surface || '#FFFFFF'};

@@ -56,56 +56,63 @@ export function AtlasCard({ atlas, index, onPress }: AtlasCardProps) {
   }, [atlas.expiredDate])
 
   return (
-    <AnimatedCard
+    <AnimatedWrapper
       layout={LinearTransition.duration(200)}
       entering={FadeInDown.delay(index * 60).duration(350)}
-      style={animatedStyle}
     >
-      <Pressable onPressIn={handlePressIn} onPressOut={handlePressOut} onPress={onPress}>
-        <CardHeader>
-          <NameContainer>
-            <DeviceName numberOfLines={1}>{atlas.name}</DeviceName>
-            <ImeiText>{atlas.imei}</ImeiText>
-          </NameContainer>
-          <ExpiryBadge expired={isExpired}>
-            <ExpiryBadgeText expired={isExpired}>
-              {isExpired ? 'Expirado' : 'Activo'}
-            </ExpiryBadgeText>
-          </ExpiryBadge>
-        </CardHeader>
+      <AnimatedCard style={animatedStyle}>
+        <Pressable
+          onPressIn={handlePressIn}
+          onPressOut={handlePressOut}
+          onPress={onPress}
+        >
+          <CardHeader>
+            <NameContainer>
+              <DeviceName numberOfLines={1}>{atlas.name}</DeviceName>
+              <ImeiText>{atlas.imei}</ImeiText>
+            </NameContainer>
+            <ExpiryBadge expired={isExpired}>
+              <ExpiryBadgeText expired={isExpired}>
+                {isExpired ? 'Expirado' : 'Activo'}
+              </ExpiryBadgeText>
+            </ExpiryBadge>
+          </CardHeader>
 
-        <Divider />
+          <Divider />
 
-        <StatsRow>
-          <StatItem>
-            <CalendarClock
-              size={16}
-              color={isExpired ? '#ef4444' : theme.colors?.primary || '#6366f1'}
-            />
-            <StatLabel>Expiración</StatLabel>
-            <StatValue expired={isExpired}>{formattedExpiry}</StatValue>
-          </StatItem>
+          <StatsRow>
+            <StatItem>
+              <CalendarClock
+                size={16}
+                color={isExpired ? '#ef4444' : theme.colors?.primary || '#6366f1'}
+              />
+              <StatLabel>Expiración</StatLabel>
+              <StatValue expired={isExpired}>{formattedExpiry}</StatValue>
+            </StatItem>
 
-          <StatDivider />
+            <StatDivider />
 
-          <StatItem>
-            <AtlasBattery battery={atlas.battery} />
-            <StatLabel>Batería</StatLabel>
-            <StatValue>{atlas.battery}%</StatValue>
-          </StatItem>
+            <StatItem>
+              <AtlasBattery battery={atlas.battery} />
+              <StatLabel>Batería</StatLabel>
+              <StatValue>{atlas.battery}%</StatValue>
+            </StatItem>
 
-          <StatDivider />
+            <StatDivider />
 
-          <StatItem>
-            <AtlasSignal signal={atlas.signal} />
-            <StatLabel>Señal</StatLabel>
-            <StatValue>{atlas.signal}%</StatValue>
-          </StatItem>
-        </StatsRow>
-      </Pressable>
-    </AnimatedCard>
+            <StatItem>
+              <AtlasSignal signal={atlas.signal} />
+              <StatLabel>Señal</StatLabel>
+              <StatValue>{atlas.signal}%</StatValue>
+            </StatItem>
+          </StatsRow>
+        </Pressable>
+      </AnimatedCard>
+    </AnimatedWrapper>
   )
 }
+
+const AnimatedWrapper = Animated.View
 
 const AnimatedCard = styled(Animated.View)`
   background-color: ${({ theme }) => theme.surface || '#FFFFFF'};

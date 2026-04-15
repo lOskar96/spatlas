@@ -10,5 +10,5 @@ export const useHeaderTitle = (title?: string) => {
     navigation.setOptions({
       title,
     })
-  }, [title])
+  }, [title, navigation])
 }

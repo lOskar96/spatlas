@@ -61,7 +61,7 @@ export default function RootLayout() {
     } else if (!isAuthenticated && !inAuthGroup) {
       router.replace('/(auth)/login')
     }
-  }, [isAuthenticated, segments, isReady, loaded, error])
+  }, [isAuthenticated, segments, isReady, loaded, error, router])
 
   useEffect(() => {
     if ((loaded || error) && isReady) {

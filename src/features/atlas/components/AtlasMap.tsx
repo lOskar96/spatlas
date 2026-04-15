@@ -1,7 +1,7 @@
 import { useFocusEffect, useIsFocused } from '@react-navigation/native'
 import { MapPin, Minus, Plus } from 'lucide-react-native'
-import { useCallback, useRef, useState } from 'react'
-import { Pressable } from 'react-native'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { Platform, Pressable } from 'react-native'
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import styled from 'styled-components/native'
 
@@ -26,6 +26,11 @@ export function AtlasMap({ initialRegion, coordinate, title }: AtlasMapProps) {
   const [showMap, setShowMap] = useState(false)
   const [mapType, setMapType] = useState<MapType>('standard')
   const mapRef = useRef<MapView>(null)
+  const [region, setRegion] = useState(initialRegion)
+
+  useEffect(() => {
+    setRegion(initialRegion)
+  }, [initialRegion])
 
   useFocusEffect(
     useCallback(() => {
@@ -35,43 +40,47 @@ export function AtlasMap({ initialRegion, coordinate, title }: AtlasMapProps) {
   )
 
   const handleZoomIn = () => {
-    if (mapRef.current) {
-      mapRef.current.getCamera().then((camera) => {
-        if (camera && camera.zoom !== undefined) {
-          const newCamera = { ...camera, zoom: camera.zoom + 1 }
-          mapRef.current?.animateCamera(newCamera, { duration: 300 })
-        }
-      })
+    const nextRegion = {
+      ...region,
+      latitudeDelta: Math.max(region.latitudeDelta * 0.5, 0.0001),
+      longitudeDelta: Math.max(region.longitudeDelta * 0.5, 0.0001),
     }
+
+    if (mapRef.current) {
+      mapRef.current.animateToRegion(nextRegion, 300)
+    }
+    setRegion(nextRegion)
   }
 
   const handleZoomOut = () => {
-    if (mapRef.current) {
-      mapRef.current.getCamera().then((camera) => {
-        if (camera && camera.zoom !== undefined) {
-          const newCamera = { ...camera, zoom: Math.max(camera.zoom - 1, 0) }
-          mapRef.current?.animateCamera(newCamera, { duration: 300 })
-        }
-      })
+    const nextRegion = {
+      ...region,
+      latitudeDelta: region.latitudeDelta * 2,
+      longitudeDelta: region.longitudeDelta * 2,
     }
+
+    if (mapRef.current) {
+      mapRef.current.animateToRegion(nextRegion, 300)
+    }
+    setRegion(nextRegion)
   }
 
   const handleCenterLocation = () => {
-    if (mapRef.current) {
-      mapRef.current.animateToRegion(
-        {
-          latitude: coordinate.latitude,
-          longitude: coordinate.longitude,
-          latitudeDelta: 0.02,
-          longitudeDelta: 0.02,
-        },
-        300,
-      )
+    const centerRegion = {
+      latitude: coordinate.latitude,
+      longitude: coordinate.longitude,
+      latitudeDelta: 0.02,
+      longitudeDelta: 0.02,
     }
+
+    if (mapRef.current) {
+      mapRef.current.animateToRegion(centerRegion, 300)
+    }
+    setRegion(centerRegion)
   }
 
   const toggleMapType = () => {
-    const types: MapType[] = ['standard', 'satellite', 'hybrid', 'terrain']
+    const types: MapType[] = ['standard', 'satellite']
     const currentIndex = types.indexOf(mapType)
     const nextIndex = (currentIndex + 1) % types.length
     setMapType(types[nextIndex])
@@ -86,8 +95,9 @@ export function AtlasMap({ initialRegion, coordinate, title }: AtlasMapProps) {
       <MapView
         key="google-map"
         ref={mapRef}
-        initialRegion={initialRegion}
-        provider={PROVIDER_GOOGLE}
+        region={region}
+        onRegionChangeComplete={setRegion}
+        provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
         style={{ flex: 1 }}
         mapType={mapType}
         showsCompass={true}
@@ -123,8 +133,6 @@ export function AtlasMap({ initialRegion, coordinate, title }: AtlasMapProps) {
           <MapTypeText>
             {mapType === 'standard' && '🗺️'}
             {mapType === 'satellite' && '🛰️'}
-            {mapType === 'hybrid' && '🔀'}
-            {mapType === 'terrain' && '⛰️'}
           </MapTypeText>
         </MapTypeButton>
       </ControlsContainer>
